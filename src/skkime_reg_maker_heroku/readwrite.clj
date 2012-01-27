@@ -1,10 +1,10 @@
-(ns skkime_kana_reg_maker.readwrite)
+(ns skkime_reg_maker_heroku.readwrite
+  (:require [clojure.java.io :as io]
+            [clojure.string :as st]))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; encoder
 
-(require '[clojure.java.io :as io])
-(require '[clojure.string :as st])
 
 ;;;;;;;;;;;;;;;;;;;
 ;; inputfile
