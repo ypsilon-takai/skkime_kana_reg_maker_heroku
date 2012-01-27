@@ -7,50 +7,67 @@
             [hiccup.form-helpers :as form] 
             [hiccup.page-helpers :as page]
             [clojure.java.io :as io]
+            [clojure.string :as string]
             [skkime_reg_maker_heroku.readwrite :as rw]))
 
-(def last-filename (atom "none"))
-
-(defn index []
+(defn page-skel [contents]
   (page/html5
    [:head
-    [:title "SKKIME roma-kana registry entry maker."]]
+    [:title "SKKIME roma-kana registry entry maker."]
+    (page/include-css "/css/style.css")]
    [:body
-    [:div {:id "instruction"}   (str "Select input file name and submit. LastFile :" @last-filename)]
+    [:div {:id "page"}
+     [:div {:id "head"}
+      [:img {:src "/img/yplogo.png" :height 100}]
+      [:h1 "SKKIME roma-kana setting generator"]]
+     [:div {:id "menu"}
+      [:ul
+       [:li [:a {:href "/"} "Input"]]]]
+     contents]]))
+
+(defn input-page []
+  (page/html5
+   [:div {:id "submenu"}
+    [:p "Link"]
+    [:ul
+     [:li [:a {:href "https://github.com/ypsilon-takai/skkime_kana_reg_maker_heroku"} "Source code(Github)"]]]]
+   [:div {:id "main"}
+    [:h2 "Select input file and submit."]
     [:form {:action "/upload" :method "POST" :enctype "multipart/form-data"}
      (form/label "upllabel" "Upload file name:")
      (form/file-upload "upload")
      [:br]
      (form/submit-button "UPLOAD")]]))
 
-(defn result-page [input-file]
-  (let [input (slurp input-file)
-        output (doall (rw/encode input-file))]
-    (page/html5
-     [:head
-      [:title "SKKIME roma-kana registry entry maker."]]
-     [:body
-      [:div {:id "input" :name "input"}
-       (form/text-area "input" input)
-       (form/text-area "output" (apply str  output))]])))
+(defn result-page [parm]
+  (page/html5
+   [:h1 "Your input and result."]
+   [:div {:id "output"}
+    (form/text-area {:id "inputdata" :rows 30} "input"
+                    (:input-data parm))
+    (form/text-area {:id "outputdata" :rows 30} "output"
+                    (str (string/join "\\\n"  (:output-data parm))
+                         "\\\n"))]))
 
 (defroutes routes
-  (GET "/" [] (index))
+  (GET "/" [] (page-skel (input-page)))
   (POST "/upload" {params :params}
-        (result-page (:tempfile (:upload params))))
+        (let [tempfile (:tempfile (:upload params))
+              input (slurp tempfile)
+              output (rw/encode tempfile)]
+          (page-skel (result-page {:input-data input :output-data output}))))
   (route/resources "/")
   (route/files "/")
   (route/not-found "NOT FOUND"))
 
 (def app
-  (handler/site  routes))
+  (handler/site routes))
 
 ;; for on the fly
 ;; (use 'ring.util.serve)
 ;; (serve app)
 ;; (stop-server)
 
-(defn -main []
-  (ring/run-jetty  app {:port 8080 :join? false}  ))
-
+(defn -main [port]
+  (ring/run-jetty app {:port (Integer/parseInt port ) :join? false}))
 
