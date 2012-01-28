@@ -23,21 +23,32 @@
      [:div {:id "menu"}
       [:ul
        [:li [:a {:href "/"} "Input"]]]]
+     [:div {:id "submenu"}
+      [:p "Link"]
+      [:ul
+       [:li [:a {:href "https://github.com/ypsilon-takai/skkime_kana_reg_maker_heroku"} "Source code(Github)"]]]]
      contents]]))
 
 (defn input-page []
   (page/html5
-   [:div {:id "submenu"}
-    [:p "Link"]
-    [:ul
-     [:li [:a {:href "https://github.com/ypsilon-takai/skkime_kana_reg_maker_heroku"} "Source code(Github)"]]]]
    [:div {:id "main"}
     [:h2 "Select input file and submit."]
     [:form {:action "/upload" :method "POST" :enctype "multipart/form-data"}
      (form/label "upllabel" "Upload file name:")
      (form/file-upload "upload")
      [:br]
-     (form/submit-button "UPLOAD")]]))
+     (form/submit-button "UPLOAD")
+     [:br]
+     [:h2 "使いかた"]
+     [:p
+      "変換ファイルを指定してください。"[:br]
+      "ファ`イルのフォーマットは"[:br]
+      [:ul
+       [:li "1行に1エントリ"]
+       [:li "[入力記号列]|[出力ひらがな]|[出力カタカナ]|[残る文字列] のフォーマットです。 "]]
+      [:li "詳しくは、[:a {:href /sample.txt} このファイルを] を参考にしてください。"[:br]]
+"※ 注意 ファイルのフォーマットは必ずUTF-8にしてください。それ以外のファイルは変換できません。"[:br]
+      ]]]))
 
 (defn result-page [parm]
   (page/html5
