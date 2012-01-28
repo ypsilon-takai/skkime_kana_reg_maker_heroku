@@ -23,14 +23,15 @@
      [:div {:id "menu"}
       [:ul
        [:li [:a {:href "/"} "Input"]]]]
-     [:div {:id "submenu"}
-      [:p "Link"]
-      [:ul
-       [:li [:a {:href "https://github.com/ypsilon-takai/skkime_kana_reg_maker_heroku"} "Source code(Github)"]]]]
+
      contents]]))
 
 (defn input-page []
   (page/html5
+   [:div {:id "submenu"}
+      [:p "Link"]
+      [:ul
+       [:li [:a {:href "https://github.com/ypsilon-takai/skkime_kana_reg_maker_heroku"} "Source code(Github)"]]]]
    [:div {:id "main"}
     [:h2 "Select input file and submit."]
     [:form {:action "/upload" :method "POST" :enctype "multipart/form-data"}
@@ -38,12 +39,7 @@
      (form/file-upload "upload")
      [:br]
      (form/submit-button "UPLOAD")
-     [:br]
-     [:br]
-     [:br]
-     [:br]
-     [:br]
-     
+     [:br][:br][:br]
      [:h2 "使いかた"]
      [:p
       "変換ファイルを指定してください。"[:br]
